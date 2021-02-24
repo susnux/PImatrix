@@ -9,4 +9,5 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
     install_requires=["pyaudio", "numpy", "rpi_ws281x"],
+    scripts=['bin/pimatrix']
 )

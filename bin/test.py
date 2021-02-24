@@ -1,7 +1,9 @@
+# Script used for testing the controller and developing new modes
+# (openCV as LED replacement, yes overkill but it was installed locally ;-) )
 import sys
-from time import sleep, monotonic
-import numpy as np
 import cv2 as cv
+import numpy as np
+from time import sleep
 from PImatrix import controller, led
 
 

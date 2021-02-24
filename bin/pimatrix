@@ -1,12 +1,7 @@
+#!/usr/bin/python3
 import socket
 import threading
 from PImatrix.controller import Controller
-
-# Universe 1
-# 0: Mode
-# 1: Speed
-# 2: Bands
-# 3: VU Mode
 
 
 UNIVERSE_1 = 2
