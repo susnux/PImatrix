@@ -21,14 +21,21 @@ But there are also some prebuilt modes, which can be selected and configured:
 ## ArtNet
 Universe can be modified in `server.py`
 
-| Universe | Channel | Payload                    |
-|----------|---------|----------------------------|
-|  1       |  1      | Mode                       |
-|  1       |  2      | Brightness                 |
-|  1       |  3      | Speed (0: slow, 255: fast) |
-|  1       |  4-63   | reserved for some modes    |
-|  1       |  64-255 | Static data `(R,G,B)`      |
-|  2       |  0-255  | Static data `(R,G,B)`      |
+| Universe | Channel  | Payload                     |  Mode      |
+|----------|----------|-----------------------------|------------|
+|  1       |  1       | Mode                        |   -        |
+|  1       |  2       | Brightness                  |  all       |
+|  1       |  3       | Speed (0: slow, 255: fast)  |  all       |
+|  1       |  4       | Color red                   |  all       |
+|  1       |  5       | Color green                 |  all       |
+|  1       |  6       | Color blue                  |  all       |
+|  **1**   | **7-63** | **reserved for some modes** |  -         |
+|  1       |  7       | Spectrum mode, see below    | `spectrum` |
+|  1       |  8       | Number of bands for the spectrum analysis / FFT| `spectrum` |
+|  1       |  9       | Text mode, see below        | `text`     |
+|  1       |  32-64   | Text                        | `text`     |
+|  1       |  110-255 | Static data `(R,G,B)`       | `static`   |
+|  2       |  0-255   | Static data `(R,G,B)`       | `static`   |
 
 ### Modes
 | Number | Mode     | Description                  |Optional arguments |
@@ -40,10 +47,9 @@ Universe can be modified in `server.py`
 |  4     | Static   | Show static data             | Static data       |
 |  5     | VU Meter | Show loudness of audio input | -                 |
 |  6     | Spectrum | Show audio spectrum          | `mode`, `bands`   |
+|  7     | Text     | Show text                    | `text`, `color`   |
 
-Mode `Spectrum` has some custom arguments:
-`mode` on channel 4 and `bands` on channel 5,
-`bands` sets up the number of bands for the spectrum analysis / FFT.
+#### Mode `Spectrum`
 
 | `mode` | Description                             |
 |--------|-----------------------------------------|
@@ -54,3 +60,12 @@ Mode `Spectrum` has some custom arguments:
 | `4`    | Rainbow colored spectrum bars           |
 | `5`    | Same as `4` but without peaks           |
 | `6`    | Endless horizontal spectrum (scrolling) |
+
+#### Mode `Text`
+
+| `mode` | Description                             |
+|--------|-----------------------------------------|
+| `0`    | Condensed RGB                           |
+| `1`    | Condensed Rainbow                       |
+| `127`  | Normal RGB                              |
+| `128`  | Normal Rainbow                          |

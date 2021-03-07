@@ -2,7 +2,7 @@ import time
 import threading
 
 from . import led, CHANNEL_MODE, CHANNEL_BRIGHTNESS
-from .modes import fish, color_modes, audio
+from .modes import fish, color_modes, audio, text
 
 
 class Controller:
@@ -12,7 +12,7 @@ class Controller:
         self.data = [0] * 1024
 
     def set_data(self, payload, begin=0):
-        self.data[begin: begin + len(payload)] = payload
+        self.data[begin : begin + len(payload)] = payload
 
     def run(self):
         modes = {
@@ -22,7 +22,9 @@ class Controller:
             3: fish.run,
             4: color_modes.static,
             5: audio.vu_meter,
-            6: audio.spectrum}
+            6: audio.spectrum,
+            7: text.run,
+        }
         local = threading.local()
         function = modes.get(self.data[CHANNEL_MODE], Controller.blackout)
         self.running = True
