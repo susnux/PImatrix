@@ -40,7 +40,10 @@ class FakeDriver:
 
 
 c = controller.Controller(FakeDriver)
-#           MODE   DIMMER    SPEED
-c.set_data([5,     255,      220,     6, 8])
+#       MODE   DIMMER    SPEED  RED   GREEN  BLUE  SPEC_MODE SPEC_BAND TEXT_MODE
+data = [7,     255,      255,   255,      0,  255,         0,        8,      128]
+data += [0] * (32 - len(data))
+data += [ord(c) for c in "This is a test! :-)"]
+c.set_data(data)
 c.run()
 sys.exit(1)
