@@ -3,41 +3,46 @@ import socket
 import threading
 from PImatrix.controller import Controller
 
-
-UNIVERSE_1 = 2
-UNIVERSE_2 = 3
-UDP_IP = "127.0.0.1"
+UNIVERSE_1 = 1
+UNIVERSE_2 = 2
+UDP_IP = "0.0.0.0"
 UDP_PORT = 6454
 
-mode = 0
+mode = -1
 thread = None
-last_seq_1 = 0
-last_seq_2 = 0
+last_seq_1 = -1
+last_seq_2 = -1
 data = [0] * 630
 
 try:
     controller = Controller()
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))
+    print("Socket bound")
     while True:
         data, address = sock.recvfrom(630)
-        print(f"New connection from {address}.")
         if len(data) < 18 or data[9] != 0x50 or data[11] < 14:
-            print("Err: Invalid or not supported ArtNet package")
+            code = 0
+            if len(data) >= 9:
+                code = data[9]
+            print(f"Err({code}): Invalid or not supported ArtNet package")
             continue
 
         universe = data[15] << 8 | data[14]
         sequence = data[12]
-        length = int(data[17])
-        payload = data[18 : 17 + length]
+        length = int(data[16] << 8 | data[17])
+        payload = data[18: 18 + length]
+        # DEBUG
+        # print(f"U: {universe} ... S: {sequence} ... LEN: {length} ... PL: {payload}")
         if universe == UNIVERSE_2 and last_seq_2 < sequence:
-            last_seq_2 = sequence
+            last_seq_2 = sequence if sequence < 255 else -1
             controller.set_data(payload, 512)
         elif universe == UNIVERSE_1 and last_seq_1 < sequence:
-            last_seq_1 = sequence
+            last_seq_1 = sequence if sequence < 255 else -1
             controller.set_data(payload)
-            if mode != data[0]:
-                mode = data[0]
+            if mode != payload[0]:
+                print(f"Mode changed from {mode} to {payload[0]}")
+                mode = payload[0]
                 if thread is not None:
                     controller.running = False
                     thread.join()
