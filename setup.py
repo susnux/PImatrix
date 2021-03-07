@@ -8,8 +8,8 @@ setuptools.setup(
     description="Controller for the stage LED matrix @ClubAquariumDD",
     include_package_data=True,
     packages=setuptools.find_packages(),
-    package_data={'': ['data/*.pkl']},
+    package_data={"": ["data/*.pkl"]},
     python_requires=">=3.6",
     install_requires=["pyaudio", "numpy", "rpi_ws281x"],
-    scripts=['bin/pimatrix'],
+    scripts=["bin/pimatrix"],
 )

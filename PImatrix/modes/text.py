@@ -11,7 +11,7 @@ def run(local, data: [], leds):
         local.current_pos = 0
     else:
         local.current_pos += speed
-    if not hasattr(local, "matrix") or local.current_pos >= (len(local.matrix[0])+led.WIDTH):
+    if not hasattr(local, "matrix") or local.current_pos >= (len(local.matrix[0]) + led.WIDTH):
         font = "font_7x3.pkl" if data[CHANNEL_TEXT_MODE] < 127 else "font_7x5.pkl"
         with open(os.path.dirname(__file__) + f"/data/{font}", "rb") as file:
             font = pickle.load(file)
@@ -24,19 +24,19 @@ def run(local, data: [], leds):
                 char = font.get(ord("?"))
             # Char height changed
             while len(local.matrix) < len(char):
-                local.matrix.insert(0, [0]*len(local.matrix[0]))
+                local.matrix.insert(0, [0] * len(local.matrix[0]))
             offset = len(local.matrix) - len(char)
             for i in range(offset):
-                local.matrix[i] += [0] * (len(char[0])+1)
+                local.matrix[i] += [0] * (len(char[0]) + 1)
             for i, row in enumerate(char):
                 local.matrix[i + offset] += row + [0]
             idx += 1
         # Fill top
         while len(local.matrix) < led.HEIGHT:
-            local.matrix.insert(0, [0]*len(local.matrix[0]))
+            local.matrix.insert(0, [0] * len(local.matrix[0]))
 
     if data[CHANNEL_TEXT_MODE] % 127 == 0:
-        local.color = [rgb_as_color(*data[CHANNEL_RED:CHANNEL_BLUE + 1])] * led.WIDTH
+        local.color = [rgb_as_color(*data[CHANNEL_RED : CHANNEL_BLUE + 1])] * led.WIDTH
     else:
         local.color = rainbow(led.WIDTH)
 

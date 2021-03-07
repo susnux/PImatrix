@@ -17,5 +17,5 @@ def calc_speed(speed, slowest=180, fastest=10):
     assert fastest < slowest
     # Target rate is 50 Hz
     per_second = 1 / 0.02
-    m = (fastest-slowest) / 255
+    m = (fastest - slowest) / 255
     return 1 / (m * per_second * speed + slowest * per_second)
