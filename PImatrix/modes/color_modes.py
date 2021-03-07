@@ -3,8 +3,12 @@ from colorsys import hsv_to_rgb
 from .. import led, CHANNEL_SPEED
 
 
-def rgb_as_color(r, g, b):
-    return int(r * 255) << 16 | int(g * 255) << 8 | int(b * 255)
+def rgb_as_color_f(r: float, g: float, b: float):
+    return rgb_as_color(int(r*255), int(g*255), int(b*255))
+
+
+def rgb_as_color(r: int, g: int, b: int):
+    return r << 16 | g << 8 | b
 
 
 def __calc_speed(speed):
@@ -18,7 +22,7 @@ def fade(local, data: [], leds):
     if not hasattr(local, "current_step"):
         local.current_step = 0.0
     local.step = __calc_speed(data[CHANNEL_SPEED])
-    color = rgb_as_color(*hsv_to_rgb(local.current_step, 1, 1))
+    color = rgb_as_color_f(*hsv_to_rgb(local.current_step, 1, 1))
     for p in range(led.WIDTH * led.HEIGHT):
         leds.setPixelColor(p, color)
 
@@ -36,7 +40,7 @@ def rainbow(local, data: [], leds):
     local.step = __calc_speed(data[CHANNEL_SPEED])
 
     for x in range(led.WIDTH):
-        color = rgb_as_color(*hsv_to_rgb(local.current_step + local.distance * x, 1, 1))
+        color = rgb_as_color_f(*hsv_to_rgb(local.current_step + local.distance * x, 1, 1))
         for y in range(led.HEIGHT):
             leds.set_led(x, y, color)
 
@@ -53,9 +57,9 @@ def static(local, data: [], leds):
                 x,
                 y,
                 rgb_as_color(
-                    data[64 + y * led.WIDTH * 3 + x * 3],
-                    data[64 + y * led.WIDTH * 3 + x * 3 + 1],
-                    data[64 + y * led.WIDTH * 3 + x * 3 + 2],
+                    data[110 + y * led.WIDTH * 3 + x * 3],
+                    data[110 + y * led.WIDTH * 3 + x * 3 + 1],
+                    data[110 + y * led.WIDTH * 3 + x * 3 + 2],
                 ),
             )
     return True

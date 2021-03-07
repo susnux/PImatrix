@@ -56,7 +56,6 @@ def run(local: object, data: [], leds):
     if not hasattr(local, "fish"):
         local.fish = []
 
-    print(len(local.fish))
     if len(local.fish) == 0 or (local.fish[0].pos[0] > local.fish[0].model.shape[0] + 1):
         if random.randint(0, 6) == 1:
             local.fish.insert(0, Fish())
@@ -79,8 +78,8 @@ def run(local: object, data: [], leds):
         diff_x = fish.model.shape[1] - 1
         coords = list(zip(*np.where(fish.model == 1)))
         for y, x in coords:
-            x = x - diff_x + fish.pos[0]
-            y = y - diff_y + fish.pos[1]
-            if x >= 0 and y >= 0 and x < led.WIDTH and y < led.HEIGHT:
+            x = int(x - diff_x + fish.pos[0])
+            y = int(y - diff_y + fish.pos[1])
+            if 0 <= x < led.WIDTH and 0 <= y < led.HEIGHT:
                 leds.set_led(x, y, ORANGE)
     return True

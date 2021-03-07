@@ -3,7 +3,7 @@ import numpy as np
 from colorsys import hsv_to_rgb
 
 from .. import MAX_CHANNEL, led, vuspectrum
-from .color_modes import rgb_as_color
+from .color_modes import rgb_as_color_f
 
 
 CHANNEL_SPECTRUM_MODE = MAX_CHANNEL + 1
@@ -11,7 +11,7 @@ CHANNEL_SPECTRUM_BANDS = CHANNEL_SPECTRUM_MODE + 1
 
 
 def __rainbow(steps):
-    return [rgb_as_color(*hsv_to_rgb((2 / 3) * ((steps - 1 - x) / (steps - 1)), 1, 1)) for x in range(steps)]
+    return [rgb_as_color_f(*hsv_to_rgb((2 / 3) * ((steps - 1 - x) / (steps - 1)), 1, 1)) for x in range(steps)]
 
 
 def __read_audio(local):
@@ -40,7 +40,7 @@ def vu_meter(local, data: [], leds):
 
     signal = __read_audio(local)
     signal = signal / (2 << 15)
-    volume = 20 * np.log10(np.sqrt(np.sum(np.square(signal)) / len(signal)) * np.sqrt(2))
+    volume = 20 * np.log10(np.sqrt(np.sum(np.square(signal*2)) / len(signal)) * np.sqrt(2))
     if volume == np.nan:
         return True
 
@@ -55,7 +55,7 @@ def vu_meter(local, data: [], leds):
             else:
                 color = 0x00FF00
         for y in range(led.HEIGHT):
-            leds.set_led(x, y, color)
+            leds.set_led(led.WIDTH-x-1, y, color)
     return True
 
 
