@@ -43,7 +43,7 @@ class VUSpectrum:
             else:
                 lower = bins[-1][0]
             bins.append((lower, high))
-        self.bins = bins[0: self.bands]
+        self.bins = bins[0 : self.bands]
 
     def calculate(self, signal, ref=2 << 15):
         # Reduce peaks
@@ -59,7 +59,7 @@ class VUSpectrum:
         levels = []
         for index, bin in enumerate(self.bins):
             # Sum bins and calculate dBFS
-            s = sum(s_mag[bin[0]: bin[1]]) / ref
+            s = sum(s_mag[bin[0] : bin[1]]) / ref
             levels.append(20 * np.log10(s) if s != 0 else self.last_levels[len(levels)])
         # Apply some mean for smoother look
         levels = np.add(self.last_levels, levels) / 2
