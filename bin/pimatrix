@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import socket
-import threading
+from multiprocessing import Process, Pipe
 from PImatrix.controller import Controller
 
 UNIVERSE_1 = 1

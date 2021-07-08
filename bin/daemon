@@ -1,0 +1,98 @@
+#!/usr/bin/python3
+import socket, queue
+from multiprocessing import Process, Pipe
+from PImatrix.controller import Controller
+
+# Setting for ArtNet
+UNIVERSE_1 = 1
+UNIVERSE_2 = 2
+UDP_IP = "0.0.0.0"
+UDP_PORT = 6454
+
+# ArtNet Server
+def stArtNet(pipe):
+    class ArtNetException(Exception):
+        pass
+
+    class ArtNet:
+        def __init__(ip, port = 6454):
+            self.ip = ip
+            self.port = port
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.bind()
+
+        def bind(self):
+            sock.bind((UDP_IP, UDP_PORT))
+
+        def run(self):
+            data, address = sock.recvfrom(630)
+            if len(data) < 18 or data[9] != 0x50 or data[11] < 14:
+                code = 0
+                if len(data) >= 9:
+                    code = data[9]
+                print(f"Err({code}): Invalid or not supported ArtNet package")
+                raise ArtNetException
+
+            universe = data[15] << 8 | data[14]
+            sequence = data[12]
+            length = int(data[16] << 8 | data[17])
+            payload = data[18: 18 + length]
+            return universe, sequence, payload
+
+    artNet = ArtNet(UDP_IP, UDP_PORT)
+    last_1 = -1
+    last_2 = -1
+    while True:
+        try:
+            universe, sequence, payload = artNet.run()
+            if universe == UNIVERSE_2 and last_2 < sequence:
+                last_2 = sequence if sequence < 255 else -1
+                pipe.put(f"data:{str(payload)}:512\n")
+            elif universe == UNIVERSE_1 and last_1 < sequence:
+                last_1 = sequence if sequence < 255 else -1
+                pipe.put(f"data:{str(payload)}\n")
+            if pipe.get(block=False):
+                break
+        except ArtNetException:
+            continue
+        except queue.Empty:
+            pass
+
+try:
+    controller = Controller()
+    sock =
+
+    print("Socket bound")
+    while True:
+        data, address = sock.recvfrom(630)
+        if len(data) < 18 or data[9] != 0x50 or data[11] < 14:
+            code = 0
+            if len(data) >= 9:
+                code = data[9]
+            print(f"Err({code}): Invalid or not supported ArtNet package")
+            continue
+
+        universe = data[15] << 8 | data[14]
+        sequence = data[12]
+        length = int(data[16] << 8 | data[17])
+        payload = data[18: 18 + length]
+        # DEBUG
+        # print(f"U: {universe} ... S: {sequence} ... LEN: {length} ... PL: {payload}")
+        if universe == UNIVERSE_2 and last_seq_2 < sequence:
+            last_seq_2 = sequence if sequence < 255 else -1
+            controller.set_data(payload, 512)
+        elif universe == UNIVERSE_1 and last_seq_1 < sequence:
+            last_seq_1 = sequence if sequence < 255 else -1
+            controller.set_data(payload)
+            if mode != payload[0]:
+                print(f"Mode changed from {mode} to {payload[0]}")
+                mode = payload[0]
+                if thread is not None:
+                    controller.running = False
+                    thread.join()
+                thread = threading.Thread(target=controller.run)
+                thread.start()
+finally:
+    if thread is not None:
+        controller.running = False
+        thread.join()
