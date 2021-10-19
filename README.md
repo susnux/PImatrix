@@ -1,3 +1,6 @@
+**No further development because PIs (especially the SD card) dies too often if the powersupply is turned of without shutting the PI down before**
+I ported everything to run on an ESP32, so there is no more SD card problem.
+
 ## PImatrix
 This is a simple controller for a LED matrix using WS2811 LEDs and a RaspberryPI.
 It was designed for a 13+25 x 8 matrix built into our stage back panel.
